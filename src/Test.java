@@ -1,75 +1,49 @@
-import java.util.concurrent.Exchanger;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 public class Test {
     public static void main(String[] args) {
 
-        // El punto donde los hilos van a intercambiar datos
-        Exchanger<String> exchanger = new Exchanger<>();
+        // Cola de capacidad 3 (si se llena, el productor se bloquea)
+        BlockingQueue<Integer> cola = new ArrayBlockingQueue<>(3);
 
-        // Hilo 1
-        Thread hilo1 = new Thread(() -> {
+        // Productor: genera números y los pone en la cola
+        Thread productor = new Thread(() -> {
+            int numero = 1;
             try {
-                String datoEnviado = "Mensaje desde Hilo 1";
-                System.out.println("Hilo 1: voy a enviar -> " + datoEnviado);
+                for (int i = 0; i < 10; i++) {
+                    System.out.println("Productor quiere poner: " + numero);
 
-                // Envía su dato y recibe el del otro hilo
-                String recibido = exchanger.exchange(datoEnviado);
+                    cola.put(numero);  // Se bloquea si la cola está llena
 
-                System.out.println("Hilo 1: recibí -> " + recibido);
+                    System.out.println("Productor puso: " + numero);
+                    numero++;
 
+                    Thread.sleep(700); // Simula producción lenta
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
 
-        // Hilo 2
-        Thread hilo2 = new Thread(() -> {
+        // Consumidor: saca números de la cola
+        Thread consumidor = new Thread(() -> {
             try {
-                String datoEnviado = "Mensaje desde Hilo 2";
-                System.out.println("Hilo 2: voy a enviar -> " + datoEnviado);
+                while (true) {
+                    System.out.println("Consumidor intenta tomar...");
 
-                String recibido = exchanger.exchange(datoEnviado);
+                    int valor = cola.take();  // Se bloquea si la cola está vacía
 
-                System.out.println("Hilo 2: recibí -> " + recibido);
+                    System.out.println("Consumidor tomó: " + valor);
 
+                    Thread.sleep(1200); // Simula procesamiento más lento
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
 
-        Thread hilo3 = new Thread(() -> {
-            try {
-                String datoEnviado = "Mensaje desde Hilo 3";
-                System.out.println("Hilo 3: voy a enviar -> " + datoEnviado);
-
-                String recibido = exchanger.exchange(datoEnviado);
-
-                System.out.println("Hilo 3: recibí -> " + recibido);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-
-        Thread hilo4 = new Thread(() -> {
-            try {
-                String datoEnviado = "Mensaje desde Hilo 4";
-                System.out.println("Hilo 4: voy a enviar -> " + datoEnviado);
-
-                String recibido = exchanger.exchange(datoEnviado);
-
-                System.out.println("Hilo 4: recibí -> " + recibido);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-
-        // Iniciar los hilos
-        hilo1.start();
-        hilo3.start();
-        hilo4.start();
-        hilo2.start();
-        
+        productor.start();
+        consumidor.start();
     }
 }

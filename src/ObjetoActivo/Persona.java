@@ -17,10 +17,35 @@ public class Persona extends Thread {
     }
 
     public void run() {
-        canjearPremio();
+        if(parqueX.parqueEstaAbierto()){
+            parqueX.ingresarAParque();
+            System.out.println("Una persona ingreso al parque");
+            this.utilizarMolinete();
+            System.out.println("Una persona utilizo el molinete -- INGRESO -- ");
+            // PERSONA YA DENTRO DEL PARQUE
+            try {
+                Thread.sleep((int)(Math.random() * 9000) + 1000);
+            } catch (Exception e) {
+            }
+            this.utilizarMolinete();
+            System.out.println("Una persona utilizo el molinete -- SALIDA -- "); 
+            parqueX.salirDeParque(); // LA SALIDA SE IMAGINA QUE ES POR 
+        } else{
+            System.out.println("El parque estaba cerrado, la persona se fue...");
+        }
+        // canjearPremio();
         
         // espectaculo();
         // montaniaRusa();
+    }
+
+    public void utilizarMolinete(){
+        parqueX.usarMolinete();
+            try {
+                Thread.sleep(2000);
+                parqueX.dejarMolinete();
+            } catch (Exception e) {
+            }
     }
 
     public void montaniaRusa() {

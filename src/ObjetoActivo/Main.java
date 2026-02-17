@@ -1,28 +1,18 @@
 package ObjetoActivo;
 
-import java.util.Random;
+import RecursoCompartido.*;
+
 
 public class Main {
     public static void main(String[] args) {
 
-        for (int i = 0; i < 10; i++) {
-            Random randomX = new Random();
-            int x = randomX.nextInt(4);
-            while (true) {
-                System.out.println(x);
-                x = (x + 1) % 4;
-                try {
-                    Thread.sleep(2000);
-                } catch (Exception e) {
-                }
-            }
-        }
-        // Teatro teatroX = new Teatro();
-        // MontaniaRusa montaniaX = new MontaniaRusa();
-        // CasaPremios casaPremiosX = new CasaPremios();
-        // Parque parqueX = new Parque(2, 50, teatroX, montaniaX, casaPremiosX);
-        // parqueX.abrirParque();
-        // EmpleadoPremios empleadoX = new EmpleadoPremios(casaPremiosX);
+        Teatro teatroX = new Teatro();
+        MontaniaRusa montaniaX = new MontaniaRusa();
+        CasaPremios casaPremiosX = new CasaPremios();
+        Comedor comedorX = new Comedor(2);
+        Parque parqueX = new Parque(2, 50, teatroX, montaniaX, casaPremiosX, comedorX);
+        parqueX.abrirParque();
+        EmpleadoPremios empleadoX = new EmpleadoPremios(casaPremiosX);
         // empleadoX.start();
 
         // OperadorMontania operadorX = new OperadorMontania(montaniaX);
@@ -37,15 +27,15 @@ public class Main {
         // }
         // }
 
-        // for (int i = 0; i < 8; i++) {
-        // Persona personaI = new Persona(parqueX,"" + i);
-        // personaI.start();
-        // try {
-        // Thread.sleep(700);
-        // } catch (Exception e) {
-        // System.out.println("LOL");
-        // }
-        // }
+        for (int i = 0; i < 10; i++) {
+        Persona personaI = new Persona(parqueX,"" + i);
+        personaI.start();
+        try {
+        Thread.sleep(500);
+        } catch (Exception e) {
+        System.out.println("LOL");
+        }
+        }
 
         // int capacidadMontania = 5;
 

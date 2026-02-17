@@ -17,22 +17,46 @@ public class Persona extends Thread {
     }
 
     public void run() {
-        if(parqueX.parqueEstaAbierto()){
-            parqueX.ingresarAParque();
-            System.out.println("Una persona ingreso al parque");
-            this.utilizarMolinete();
-            System.out.println("Una persona utilizo el molinete -- INGRESO -- ");
-            // PERSONA YA DENTRO DEL PARQUE
-            try {
-                Thread.sleep((int)(Math.random() * 9000) + 1000);
-            } catch (Exception e) {
+        // if(parqueX.parqueEstaAbierto()){
+        //     parqueX.ingresarAParque();
+        //     System.out.println("Una persona ingreso al parque");
+        //     this.utilizarMolinete();
+        //     System.out.println("Una persona utilizo el molinete -- INGRESO -- ");
+        //     // PERSONA YA DENTRO DEL PARQUE
+        //     try {
+        //         Thread.sleep((int)(Math.random() * 9000) + 1000);
+        //     } catch (Exception e) {
+        //     }
+        //     this.utilizarMolinete();
+        //     System.out.println("Una persona utilizo el molinete -- SALIDA -- "); 
+        //     parqueX.salirDeParque(); // LA SALIDA SE IMAGINA QUE ES POR 
+        // } else{
+        //     System.out.println("El parque estaba cerrado, la persona se fue...");
+        // }
+
+        try {
+            if(parqueX.ingresarComedor()){
+                System.out.println("Una persona entro al comedor");
+                Thread.sleep(500);
+                int mesa = parqueX.sentarseEnMesa();
+                System.out.println("UNA PERSONA SE SENTO EN LA MESA " + mesa);
+                if(parqueX.iniciarAComer(mesa) == -1){
+                    System.out.println("Una persona se canso de esperar en la mesa " + mesa + " y se fue");
+                }else{
+                    Thread.sleep(5000);
+                    System.out.println("Una persona termino de comer en la mesa " + mesa);
+                }
+                parqueX.liberarMesa(mesa);
+                Thread.sleep(500);
+                parqueX.salirDeComedor();
+            } else{
+                System.out.println(" me fui lol");
             }
-            this.utilizarMolinete();
-            System.out.println("Una persona utilizo el molinete -- SALIDA -- "); 
-            parqueX.salirDeParque(); // LA SALIDA SE IMAGINA QUE ES POR 
-        } else{
-            System.out.println("El parque estaba cerrado, la persona se fue...");
+        } catch (Exception e) {
+             System.out.println("ERROR C");
+             System.out.println(e);
         }
+
         // canjearPremio();
         
         // espectaculo();

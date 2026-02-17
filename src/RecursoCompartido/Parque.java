@@ -140,4 +140,23 @@ public class Parque {
         casaPremiosX.clienteSaleDeTienda();
     }
 
+    public boolean ingresarComedor(){
+        return comedorX.entrarAComedor();
+    }
+
+    public void salirDeComedor(){
+        comedorX.salirDeComedor();
+    }
+
+    public int sentarseEnMesa(){
+        return comedorX.sentarseEnMesa();
+    }
+
+    public int iniciarAComer(int x){
+        return comedorX.iniciarAComer(x);
+    }
+
+    public void liberarMesa(int x){
+        comedorX.liberarMesa(x);
+    }
 }

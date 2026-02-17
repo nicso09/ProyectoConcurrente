@@ -17,7 +17,8 @@ public class Comedor {
         this.espaciosMesas = new Semaphore[cantMesas];
         this.espaciosComedor = new Semaphore(cantMesas*4); // cantMesas * 4 = espaciosComedor -> (4 Lugares por mesa)
         for (int i = 0; i < mesas.length; i++) {
-            mesas[i] = new CyclicBarrier(4); // 4 lugares por mesa
+            final int mesaNum = i;
+            mesas[i] = new CyclicBarrier(4, () -> {    System.out.println("LA MESA " + mesaNum + " INICIO A COMER");}); // 4 lugares por mesa
             espaciosMesas[i] = new Semaphore(4);
         } 
     }
@@ -27,15 +28,16 @@ public class Comedor {
         try {
             pudoEntrar = espaciosComedor.tryAcquire(30, TimeUnit.SECONDS);
         } catch (Exception e) {
+            System.out.println("ERROR A");
         }
         return pudoEntrar;
     }
 
     public int sentarseEnMesa(){
         Random randomX = new Random();
-        int x = randomX.nextInt(mesas.length);
+        int x = randomX.nextInt(mesas.length); // 0 o 1 si cantMesas = 2
         while(!(espaciosMesas[x].tryAcquire())){
-            x = (x+1)%4;
+            x = (x+1)% mesas.length;
         }
         return x;
     }
@@ -43,12 +45,12 @@ public class Comedor {
     public int iniciarAComer(int x){
         int mesa = x;
         try {
-            mesas[x].await(30, TimeUnit.SECONDS);
+            mesas[x].await(10, TimeUnit.SECONDS);
         } catch (TimeoutException | BrokenBarrierException e) {
             mesa = -1;
         } catch (Exception e) {
             mesa = -1;
-        }
+        } 
         return mesa;
     }
 

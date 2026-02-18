@@ -17,6 +17,7 @@ public class Persona extends Thread {
     }
 
     public void run() {
+        realidadVirtual();
         // if(parqueX.parqueEstaAbierto()){
         //     parqueX.ingresarAParque();
         //     System.out.println("Una persona ingreso al parque");
@@ -34,34 +35,13 @@ public class Persona extends Thread {
         //     System.out.println("El parque estaba cerrado, la persona se fue...");
         // }
 
-        try {
-            if(parqueX.ingresarComedor()){
-                System.out.println("Una persona entro al comedor");
-                Thread.sleep(500);
-                int mesa = parqueX.sentarseEnMesa();
-                System.out.println("UNA PERSONA SE SENTO EN LA MESA " + mesa);
-                if(parqueX.iniciarAComer(mesa) == -1){
-                    System.out.println("Una persona se canso de esperar en la mesa " + mesa + " y se fue");
-                }else{
-                    Thread.sleep(5000);
-                    System.out.println("Una persona termino de comer en la mesa " + mesa);
-                }
-                parqueX.liberarMesa(mesa);
-                Thread.sleep(500);
-                parqueX.salirDeComedor();
-            } else{
-                System.out.println(" me fui lol");
-            }
-        } catch (Exception e) {
-             System.out.println("ERROR C");
-             System.out.println(e);
-        }
 
         // canjearPremio();
         
         // espectaculo();
         // montaniaRusa();
     }
+    
 
     public void utilizarMolinete(){
         parqueX.usarMolinete();
@@ -81,14 +61,45 @@ public class Persona extends Thread {
                 System.out.println("Una persona " + nombre + " se subió a la montania rusa");
                 if (parqueX.esperaArranque(this)) {
                     // Espera en su semáforo único hasta que MontaniaRusa termine y la baje
-                    int puntos = parqueX.bajarMontania(this);
+                    this.aumentarPuntosAtraccion(parqueX.bajarMontania(this));
                     System.out.println("Una persona " + nombre + " persona bajó de la montania rusa");
-                    this.aumentarPuntosAtraccion(puntos);
                 } else {
                     System.out.println("Una persona espero mucho tiempo y se cansó, se ha bajado de la montaña rusa");
                 }
             } else {
                 System.out.println("FILA LLENA, Se va a otra atraccion");
+            }
+        } catch (Exception e) {
+        }
+    }
+
+    public void realidadVirtual(){
+        System.out.println("Una persona llego a la atraccion de realidad Virtual");
+        try {
+            Thread.sleep(1200);
+            if(parqueX.intentarPonerCasco()){
+                System.out.println("Una persona " + nombre + " se ha colocado un casco");
+                Thread.sleep(600);
+                if(parqueX.intentarPonerManoplas()){
+                    Thread.sleep(600);
+                    System.out.println("Una persona " + nombre + " se ha colocado las manoplas");
+                    if(parqueX.intentarUsarBase()){
+                        Thread.sleep(600);
+                        System.out.println("Una persona " + nombre + " tomo una base");
+                        parqueX.avisarAEncargado();
+                        parqueX.ingresarAJugarRealidad();
+                        System.out.println("Una persona con equipo completo ingreso a jugar...");
+                        Thread.sleep(4000);
+                        System.out.println("Una persona termino de jugar y dejo el equipo");
+                        this.aumentarPuntosAtraccion(parqueX.terminarDeJugarRealidad());
+                    }else{
+                        System.out.println("Una persona se canso de esperar una base y se fue...");
+                    }
+                } else{
+                   System.out.println("Una persona se canso de esperar manoplas y se fue...");  
+                }
+            } else{
+                System.out.println("Una persona se canso de esperar cascos y se fue...");
             }
         } catch (Exception e) {
         }
@@ -123,6 +134,31 @@ public class Persona extends Thread {
             }
         }
         parqueX.personaSaleTienda();
+    }
+
+    public void comedor(){
+        try {
+            if(parqueX.ingresarComedor()){
+                System.out.println("Una persona entro al comedor");
+                Thread.sleep(500);
+                int mesa = parqueX.sentarseEnMesa();
+                System.out.println("UNA PERSONA SE SENTO EN LA MESA " + mesa);
+                if(parqueX.iniciarAComer(mesa) == -1){
+                    System.out.println("Una persona se canso de esperar en la mesa " + mesa + " y se fue");
+                }else{
+                    Thread.sleep(5000);
+                    System.out.println("Una persona termino de comer en la mesa " + mesa);
+                }
+                parqueX.liberarMesa(mesa);
+                Thread.sleep(500);
+                parqueX.salirDeComedor();
+            } else{
+                System.out.println(" me fui lol");
+            }
+        } catch (Exception e) {
+             System.out.println("ERROR C");
+             System.out.println(e);
+        }
     }
 
     public String conversion(int x){

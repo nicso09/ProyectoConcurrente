@@ -10,9 +10,13 @@ public class Main {
         MontaniaRusa montaniaX = new MontaniaRusa();
         CasaPremios casaPremiosX = new CasaPremios();
         Comedor comedorX = new Comedor(2);
-        Parque parqueX = new Parque(2, 50, teatroX, montaniaX, casaPremiosX, comedorX);
+        RealidadVirtual realidadVirtualX = new RealidadVirtual(2, 3, 2);
+
+        Parque parqueX = new Parque(2, 50, teatroX, montaniaX, casaPremiosX, comedorX, realidadVirtualX);
         parqueX.abrirParque();
         EmpleadoPremios empleadoX = new EmpleadoPremios(casaPremiosX);
+        EncargadoVisores encargadoX = new EncargadoVisores(realidadVirtualX);
+        encargadoX.start();
         // empleadoX.start();
 
         // OperadorMontania operadorX = new OperadorMontania(montaniaX);

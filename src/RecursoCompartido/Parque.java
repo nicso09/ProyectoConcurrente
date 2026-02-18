@@ -10,19 +10,16 @@ public class Parque {
     boolean estaAbierto;
     // CONTROL MONTANIA RUSA
     MontaniaRusa montaniaRusaX;
-    // FIN CONTROL MONTANIA RUSA
-
     // CONTROL TEATRO
     Teatro teatroX;
-
     //  CONTROL CASA PREMIOS
     CasaPremios casaPremiosX;
-
     // CONTROL COMEDOR
     Comedor comedorX;
+    // CONTROL REALIDAD VIRTUAL
+    RealidadVirtual realidadVirtualX;
 
-
-    public Parque(int cantMolinetes, int cantEspaciosParque, Teatro teatroX, MontaniaRusa montaniaRusaX, CasaPremios casaPremiosX, Comedor comedorX) {
+    public Parque(int cantMolinetes, int cantEspaciosParque, Teatro teatroX, MontaniaRusa montaniaRusaX, CasaPremios casaPremiosX, Comedor comedorX, RealidadVirtual realidadVirtualX) {
         this.molinetes = new Semaphore(cantMolinetes);
         this.mutexParque = new Semaphore(1);
         this.espacioParque = new Semaphore(cantEspaciosParque);
@@ -34,6 +31,7 @@ public class Parque {
         this.montaniaRusaX = montaniaRusaX;
         this.casaPremiosX = casaPremiosX;
         this.comedorX = comedorX;
+        this.realidadVirtualX = realidadVirtualX;
     }
 
     public void abrirParque(){
@@ -159,4 +157,29 @@ public class Parque {
     public void liberarMesa(int x){
         comedorX.liberarMesa(x);
     }
+
+    public boolean intentarPonerCasco(){
+        return realidadVirtualX.intentarPonerCasco();
+    }
+
+    public boolean intentarPonerManoplas(){
+        return realidadVirtualX.intentarPonerManoplas();
+    }
+
+    public boolean intentarUsarBase(){
+        return realidadVirtualX.intentarUsarBase();
+    }
+
+    public void avisarAEncargado(){
+        realidadVirtualX.avisarAEncargado();
+    }
+
+    public void ingresarAJugarRealidad(){
+        realidadVirtualX.ingresarAJugar();
+    }
+
+    public int terminarDeJugarRealidad(){
+        return realidadVirtualX.terminarDeJugar();
+    }
+
 }

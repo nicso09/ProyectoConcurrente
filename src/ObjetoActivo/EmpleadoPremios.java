@@ -14,12 +14,12 @@ public class EmpleadoPremios extends Thread{
     public void run(){
         int puntosCliente = 0; 
         while (true) {
-            System.out.println("VENDEDOR ESPERA CLIENTE");
+            System.out.println("--- VENDEDOR ESPERA CLIENTE ---");
             puntosCliente = casaPremiosX.canjearPremio(0);
             entregarTipoPremio(puntosCliente);
             puntosTotales += puntosCliente;
             try {
-                Thread.sleep(2000);
+                Thread.sleep(1000);
             } catch (Exception e) {
             }
             System.out.println("PUNTOS ACTUALES VENDEDOR: "  + puntosTotales);

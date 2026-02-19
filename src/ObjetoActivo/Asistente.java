@@ -12,7 +12,7 @@ public class Asistente extends Thread{
             while (true) {
                 teatroX.asistenteListoParaShow();
                 teatroX.asistenteIngresaAShow();
-                Thread.sleep(5000);
+                Thread.sleep(4000);
                 teatroX.asistenteSaleDelShow();
             }
         } catch (Exception e) {

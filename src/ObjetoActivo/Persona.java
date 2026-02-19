@@ -1,39 +1,56 @@
 package ObjetoActivo;
 
 import RecursoCompartido.Parque;
-
+import java.util.Random;
 
 public class Persona extends Thread {
     Parque parqueX;
     int[] cantTickets; // MR POS [0] ; RV POS [1]
     String nombre;
+    boolean [] actividadRealizada;
+    int cantActRealizadas;
 
     public Persona(Parque parqueX, String nombre) {
         this.parqueX = parqueX;
         this.cantTickets = new int[2];
-        this.cantTickets[0] = (int)(Math.random() * 9) + 1;
-        this.cantTickets[1] = (int)(Math.random() * 9) + 1;
+        this.cantTickets[0] = 0;
+        this.cantTickets[1] = 0;
         this.nombre = nombre;
+        this.actividadRealizada = new boolean[3]; // DEFINIMOS 3 YA QUE SON LA CANTIDAD DE ATRACCIONES DEL PARQUE
+        this.cantActRealizadas = 0;
+        for (int i = 0; i < actividadRealizada.length; i++) {
+            actividadRealizada[i] = false;
+        }
     }
 
     public void run() {
-        realidadVirtual();
-        // if(parqueX.parqueEstaAbierto()){
-        //     parqueX.ingresarAParque();
-        //     System.out.println("Una persona ingreso al parque");
-        //     this.utilizarMolinete();
-        //     System.out.println("Una persona utilizo el molinete -- INGRESO -- ");
-        //     // PERSONA YA DENTRO DEL PARQUE
-        //     try {
-        //         Thread.sleep((int)(Math.random() * 9000) + 1000);
-        //     } catch (Exception e) {
-        //     }
-        //     this.utilizarMolinete();
-        //     System.out.println("Una persona utilizo el molinete -- SALIDA -- "); 
-        //     parqueX.salirDeParque(); // LA SALIDA SE IMAGINA QUE ES POR 
-        // } else{
-        //     System.out.println("El parque estaba cerrado, la persona se fue...");
-        // }
+        if(parqueX.parqueEstaAbierto()){
+            // PROCESO INGRESAR A PARQUE UNA VEZ "ENTRADA" COMPRADA
+            parqueX.ingresarAParque();
+            System.out.println("Una persona ingreso al parque");
+            this.utilizarMolinete();
+            System.out.println("Una persona utilizo el molinete -- INGRESO -- ");
+            // PERSONA YA DENTRO DEL PARQUE
+            Random randX = new Random();
+            int numActividad;
+            while((cantActRealizadas < actividadRealizada.length) && parqueX.actividadesDisponibles()){
+                numActividad = randX.nextInt(3);
+                if(!actividadRealizada[numActividad])
+                    this.intentarRealizarActividad(numActividad);
+            }
+            // LA PERSONA LUEGO DE TERMINAR LAS ACTIVIDADES VA A COMER
+            this.comedor();
+            
+            // CAMBIA LOS TICKETS ANTES DE IRSE
+            this.canjearPremio(); 
+
+            // PROCESO SALIDA DEL PARQUE
+            this.utilizarMolinete();
+            System.out.println("Una persona utilizo el molinete -- SALIDA -- "); 
+            parqueX.salirDeParque(); // LA SALIDA SE IMAGINA QUE ES POR 
+        } else{
+            System.out.println("El parque estaba cerrado, la persona se fue...");
+        }
 
 
         // canjearPremio();
@@ -42,18 +59,37 @@ public class Persona extends Thread {
         // montaniaRusa();
     }
     
+    public void intentarRealizarActividad(int x){
+        boolean fueRealizada = false;
+        switch (x){
+            case 0:
+                fueRealizada = montaniaRusa();
+                break;
+            case 1:
+                fueRealizada = realidadVirtual();
+                break;
+            case 2:
+                fueRealizada = espectaculo();
+                break;
+        }
+        actividadRealizada[x] = fueRealizada;
+        if(fueRealizada)
+            cantActRealizadas++;
+    }
 
     public void utilizarMolinete(){
         parqueX.usarMolinete();
             try {
-                Thread.sleep(2000);
+                Thread.sleep(1200);
                 parqueX.dejarMolinete();
             } catch (Exception e) {
             }
     }
 
-    public void montaniaRusa() {
+    public boolean montaniaRusa() {
+        boolean realizarActividad = false;
         try {
+            if(parqueX.montaniaRusaAbierto()){
             if (parqueX.ingresarAMontania(this)) {
                 System.out.println("Llegó una persona " + nombre + " a la fila de espera");
                 // Espera en su semáforo único hasta que la montaña rusa la llame
@@ -62,63 +98,76 @@ public class Persona extends Thread {
                 if (parqueX.esperaArranque(this)) {
                     // Espera en su semáforo único hasta que MontaniaRusa termine y la baje
                     this.aumentarPuntosAtraccion(parqueX.bajarMontania(this));
+                    realizarActividad = true;
                     System.out.println("Una persona " + nombre + " persona bajó de la montania rusa");
                 } else {
                     System.out.println("Una persona espero mucho tiempo y se cansó, se ha bajado de la montaña rusa");
                 }
             } else {
-                System.out.println("FILA LLENA, Se va a otra atraccion");
+                System.out.println("FILA DE MONTAÑA RUSA LLENA, Se va a otra atraccion...");
             }
+        }
         } catch (Exception e) {
         }
+        return realizarActividad;
     }
 
-    public void realidadVirtual(){
-        System.out.println("Una persona llego a la atraccion de realidad Virtual");
-        try {
-            Thread.sleep(1200);
-            if(parqueX.intentarPonerCasco()){
-                System.out.println("Una persona " + nombre + " se ha colocado un casco");
-                Thread.sleep(600);
-                if(parqueX.intentarPonerManoplas()){
+    public boolean realidadVirtual(){
+        boolean fueRealizada = false;
+        if (parqueX.realidadVirtualAbierto()) {
+            System.out.println("Una persona llego a la atraccion de realidad Virtual");
+            try {
+                Thread.sleep(1200);
+                if(parqueX.intentarPonerCasco()){
+                    System.out.println("Una persona " + nombre + " se ha colocado un casco");
                     Thread.sleep(600);
-                    System.out.println("Una persona " + nombre + " se ha colocado las manoplas");
-                    if(parqueX.intentarUsarBase()){
+                    if(parqueX.intentarPonerManoplas()){
                         Thread.sleep(600);
-                        System.out.println("Una persona " + nombre + " tomo una base");
-                        parqueX.avisarAEncargado();
-                        parqueX.ingresarAJugarRealidad();
-                        System.out.println("Una persona con equipo completo ingreso a jugar...");
-                        Thread.sleep(4000);
-                        System.out.println("Una persona termino de jugar y dejo el equipo");
-                        this.aumentarPuntosAtraccion(parqueX.terminarDeJugarRealidad());
-                    }else{
-                        System.out.println("Una persona se canso de esperar una base y se fue...");
+                        System.out.println("Una persona " + nombre + " se ha colocado las manoplas");
+                        if(parqueX.intentarUsarBase()){
+                            Thread.sleep(600);
+                            System.out.println("Una persona " + nombre + " tomo una base");
+                            parqueX.avisarAEncargado();
+                            parqueX.ingresarAJugarRealidad();
+                            System.out.println("Una persona con equipo completo ingreso a jugar...");
+                            Thread.sleep(4000);
+                            System.out.println("Una persona termino de jugar y dejo el equipo");
+                            this.aumentarPuntosAtraccion(parqueX.terminarDeJugarRealidad());
+                            fueRealizada = true;
+                        }else{
+                            System.out.println("Una persona se canso de esperar una base y se fue...");
+                        }
+                    } else{
+                       System.out.println("Una persona se canso de esperar manoplas y se fue...");  
                     }
                 } else{
-                   System.out.println("Una persona se canso de esperar manoplas y se fue...");  
+                    System.out.println("Una persona se canso de esperar cascos y se fue...");
                 }
-            } else{
-                System.out.println("Una persona se canso de esperar cascos y se fue...");
+            } catch (Exception e) {
             }
-        } catch (Exception e) {
         }
+        return fueRealizada;
     }
 
-    public void espectaculo() {
-        try {
-            if (parqueX.ingresarATeatro()) {
-                System.out.println("Una persona ingreso al teatro");
-                Thread.sleep(1000);
-                if (parqueX.ingresarAShow()) {
-                    System.out.println("Una persona entro al show");
-                    parqueX.salirShow();
-                    System.out.println("Una persona salio del show");
+    public boolean espectaculo() {
+        boolean fueRealizada = false;
+        if (parqueX.teatroAbierto()) {
+            try {
+                if (parqueX.ingresarATeatro()) {
+                    System.out.println("Una persona ingreso al teatro");
+                    Thread.sleep(1000);
+                    if (parqueX.ingresarAShow()) {
+                        System.out.println("Una persona entro al show");
+                        parqueX.salirShow();
+                        fueRealizada = true;
+                        System.out.println("Una persona salio del show");
+                    }
+                    parqueX.salirTeatro();
                 }
-                parqueX.salirTeatro();
+            } catch (Exception e) {
             }
-        } catch (Exception e) {
         }
+        return fueRealizada;
     }
 
     public void canjearPremio(){

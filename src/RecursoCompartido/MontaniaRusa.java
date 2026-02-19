@@ -18,6 +18,8 @@ public class MontaniaRusa {
     Semaphore mutexHash;
     Map<Persona, Semaphore> semaforoSubida; // Semáforo único por persona para subir
     Map<Persona, Semaphore> semaforoBajada; // Semáforo único por persona para bajar
+    Semaphore mutexActividad;
+    boolean estadoActividad;
 
     public MontaniaRusa() {
         colaDeEsperaMontania = new ArrayBlockingQueue<>(10);
@@ -26,6 +28,37 @@ public class MontaniaRusa {
         semaforoBajada = new HashMap<>();
         esperaLimite = new CyclicBarrier(5);
         this.mutexHash = new Semaphore(1);
+        this.mutexActividad = new Semaphore(1);
+        this.estadoActividad = false; // TRUE SIGNIFICA ABIERTA - FALSE SIGNFICA CERRADA
+    }
+
+      public void cerrarActividad(){
+        try {
+            this.mutexActividad.acquire();
+        } catch (Exception e) {
+        }
+        this.estadoActividad = false;
+        this.mutexActividad.release();
+    }
+
+    public void abrirActividad(){
+       try {
+            this.mutexActividad.acquire();
+            this.estadoActividad = true;
+            this.mutexActividad.release(); 
+        } catch (Exception e) {
+        }
+    }
+
+    public boolean estaAbierto(){
+        boolean actividadAbierta = false;
+        try {
+            this.mutexActividad.acquire();
+            actividadAbierta = this.estadoActividad;
+            this.mutexActividad.release();
+        } catch (Exception e) {
+        }
+        return actividadAbierta;
     }
 
     public boolean entrar(Persona personaX) {
@@ -102,11 +135,13 @@ public class MontaniaRusa {
     public boolean esperarInicio(Persona personaX){
         boolean inicioViaje = true;
         try {
-                esperaLimite.await(8, TimeUnit.SECONDS);
-            } catch (TimeoutException e) {
+                esperaLimite.await(25, TimeUnit.SECONDS);
+            } catch (TimeoutException | BrokenBarrierException e) {
                 inicioViaje = false;
-            } catch (BrokenBarrierException e) {
-                inicioViaje = false;
+                synchronized (esperaLimite) {
+                if(esperaLimite.isBroken()) // REPARAMOS LA BARRERA PARA PROXIMAS PERSONAS (HILOS)
+                    esperaLimite.reset();
+            }
             } catch (Exception e) {
             if(!inicioViaje){
                 asientosMontaniaRusa.poll(); // SACA UNA PERSONA DEL ASIENTO DE LA MONTAÑA RUSA

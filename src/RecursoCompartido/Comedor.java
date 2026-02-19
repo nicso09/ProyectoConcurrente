@@ -26,7 +26,7 @@ public class Comedor {
     public boolean entrarAComedor(){
         boolean pudoEntrar = false;
         try {
-            pudoEntrar = espaciosComedor.tryAcquire(30, TimeUnit.SECONDS);
+            pudoEntrar = espaciosComedor.tryAcquire(40, TimeUnit.SECONDS);
         } catch (Exception e) {
             System.out.println("ERROR A");
         }
@@ -45,8 +45,12 @@ public class Comedor {
     public int iniciarAComer(int x){
         int mesa = x;
         try {
-            mesas[x].await(10, TimeUnit.SECONDS);
+            mesas[x].await(30, TimeUnit.SECONDS);
         } catch (TimeoutException | BrokenBarrierException e) {
+            synchronized (mesas[x]) {
+                if(mesas[x].isBroken()) // REPARAMOS LA BARRERA PARA PROXIMAS PERSONAS (HILOS)
+                    mesas[x].reset();
+            }
             mesa = -1;
         } catch (Exception e) {
             mesa = -1;

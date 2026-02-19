@@ -2,58 +2,50 @@ package ObjetoActivo;
 
 import RecursoCompartido.*;
 
-
 public class Main {
     public static void main(String[] args) {
 
+        // ATRACCIONES
         Teatro teatroX = new Teatro();
         MontaniaRusa montaniaX = new MontaniaRusa();
-        CasaPremios casaPremiosX = new CasaPremios();
-        Comedor comedorX = new Comedor(2);
         RealidadVirtual realidadVirtualX = new RealidadVirtual(2, 3, 2);
 
-        Parque parqueX = new Parque(2, 50, teatroX, montaniaX, casaPremiosX, comedorX, realidadVirtualX);
-        parqueX.abrirParque();
-        EmpleadoPremios empleadoX = new EmpleadoPremios(casaPremiosX);
-        EncargadoVisores encargadoX = new EncargadoVisores(realidadVirtualX);
+        // ACTIVIDADES DE SHOPPING
+        CasaPremios casaPremiosX = new CasaPremios();
+        Comedor comedorX = new Comedor(6);
+
+        // PARQUE Y DUENIO
+        Parque parqueX = new Parque(9, 18, 2, 50, teatroX, montaniaX, casaPremiosX, comedorX, realidadVirtualX);
+        Duenio duenioX = new Duenio(parqueX);
+        duenioX.start();
+
+        // EMPLEADOS
+        OperadorMontania operadorX = new OperadorMontania(montaniaX); // EMPLEADO MONTANIA RUSA
+        EmpleadoPremios empleadoX = new EmpleadoPremios(casaPremiosX); // EMPLEADO DE PREMIOS
+        EncargadoVisores encargadoX = new EncargadoVisores(realidadVirtualX); // EMPLEADO DE REALIDAD VIRTUAL
+
+        operadorX.start();
+        empleadoX.start();
         encargadoX.start();
-        // empleadoX.start();
 
-        // OperadorMontania operadorX = new OperadorMontania(montaniaX);
-        // operadorX.start();
-        // for (int i = 0; i < 5; i++) {
-        // Asistente asistenteX = new Asistente(teatroX);
-        // asistenteX.start();
-        // System.out.println("Llego un asistente al teatro");
-        // try {
-        // Thread.sleep(900);
-        // } catch (Exception e) {
-        // }
-        // }
-
-        for (int i = 0; i < 10; i++) {
-        Persona personaI = new Persona(parqueX,"" + i);
-        personaI.start();
-        try {
-        Thread.sleep(500);
-        } catch (Exception e) {
-        System.out.println("LOL");
-        }
+        for (int i = 0; i < 6; i++) {
+            Asistente asistenteX = new Asistente(teatroX);
+            asistenteX.start();
+            try {
+                Thread.sleep(900);
+            } catch (Exception e) {
+            }
         }
 
-        // int capacidadMontania = 5;
-
-        // Parque parqueX = new Parque(0, capacidadMontania);
-        // MontaniaRusa montaniaRusaX = new MontaniaRusa(capacidadMontania, parqueX);
-        // montaniaRusaX.start();
-
-        // for (int i = 0; i < 20; i++) {
-        // Persona p = new Persona(parqueX, "Persona " + i);
-        // p.start();
-        // try {
-        // Thread.sleep(1200);
-        // } catch (Exception e) {
-        // }
-        // }
+        int j = 0;
+        while (true) {
+            Persona personaI = new Persona(parqueX, "" + j);
+            j++;
+            personaI.start();
+            try {
+                Thread.sleep(2000);
+            } catch (Exception e) {
+            }
+        }
     }
 }

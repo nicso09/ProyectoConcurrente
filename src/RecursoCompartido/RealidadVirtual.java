@@ -56,7 +56,7 @@ public class RealidadVirtual {
     public boolean intentarPonerCasco() {
         boolean pudoUsarEquipo = true;
         try {
-            pudoUsarEquipo = this.visores.tryAcquire(25, TimeUnit.SECONDS);
+            pudoUsarEquipo = this.visores.tryAcquire(25, TimeUnit.SECONDS); // CAMBIAR POR ACQUIRE
         } catch (Exception e) {
             System.out.println("ERROR CASCO");
         }

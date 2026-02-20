@@ -47,7 +47,7 @@ public class Comedor {
         try {
             mesas[x].await(30, TimeUnit.SECONDS);
         } catch (TimeoutException | BrokenBarrierException e) {
-            synchronized (mesas[x]) {
+            synchronized (mesas[x]) { // CAMBIAR POR MUTEX
                 if(mesas[x].isBroken()) // REPARAMOS LA BARRERA PARA PROXIMAS PERSONAS (HILOS)
                     mesas[x].reset();
             }

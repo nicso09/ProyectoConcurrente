@@ -135,10 +135,10 @@ public class MontaniaRusa {
     public boolean esperarInicio(Persona personaX){
         boolean inicioViaje = true;
         try {
-                esperaLimite.await(25, TimeUnit.SECONDS);
+                esperaLimite.await(25, TimeUnit.SECONDS); // SACAR ESTA BARRERA
             } catch (TimeoutException | BrokenBarrierException e) {
                 inicioViaje = false;
-                synchronized (esperaLimite) {
+                synchronized (esperaLimite) { // CAMBIAR POR UN MUTEX
                 if(esperaLimite.isBroken()) // REPARAMOS LA BARRERA PARA PROXIMAS PERSONAS (HILOS)
                     esperaLimite.reset();
             }

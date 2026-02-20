@@ -17,12 +17,12 @@ public class EmpleadoPremios extends Thread{
             System.out.println("--- VENDEDOR ESPERA CLIENTE ---");
             puntosCliente = casaPremiosX.canjearPremio(0);
             entregarTipoPremio(puntosCliente);
-            puntosTotales += puntosCliente;
+            // puntosTotales += puntosCliente;
             try {
                 Thread.sleep(1000);
             } catch (Exception e) {
             }
-            System.out.println("PUNTOS ACTUALES VENDEDOR: "  + puntosTotales);
+            // System.out.println("PUNTOS ACTUALES VENDEDOR: "  + puntosTotales);
         }
     }
 

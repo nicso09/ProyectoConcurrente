@@ -8,9 +8,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public class Comedor {
-    CyclicBarrier[] mesas;
-    Semaphore [] espaciosMesas;
-    Semaphore espaciosComedor;
+    private CyclicBarrier[] mesas;
+    private Semaphore [] espaciosMesas;
+    private Semaphore espaciosComedor;
 
     public Comedor(int cantMesas) {
         this.mesas = new CyclicBarrier[cantMesas];

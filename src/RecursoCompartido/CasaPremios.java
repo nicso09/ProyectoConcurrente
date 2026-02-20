@@ -4,8 +4,8 @@ import java.util.concurrent.Exchanger;
 import java.util.concurrent.Semaphore;
 
 public class CasaPremios{
-        Exchanger<Integer> puntos;
-        Semaphore tiendaDisponible;
+        private Exchanger<Integer> puntos;
+        private Semaphore tiendaDisponible;
     public CasaPremios() {
         this.puntos = new Exchanger<>();
         this.tiendaDisponible = new Semaphore(1);

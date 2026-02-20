@@ -4,11 +4,11 @@ import RecursoCompartido.Parque;
 import java.util.Random;
 
 public class Persona extends Thread {
-    Parque parqueX;
-    int[] cantTickets; // MR POS [0] ; RV POS [1]
-    String nombre;
-    boolean [] actividadRealizada;
-    int cantActRealizadas;
+    private Parque parqueX;
+    private int[] cantTickets; // MR POS [0] ; RV POS [1]
+    private String nombre;
+    private boolean [] actividadRealizada;
+    private int cantActRealizadas;
 
     public Persona(Parque parqueX, String nombre) {
         this.parqueX = parqueX;

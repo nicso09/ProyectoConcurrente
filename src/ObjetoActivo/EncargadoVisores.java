@@ -2,7 +2,7 @@ package ObjetoActivo;
 import RecursoCompartido.RealidadVirtual;
 
 public class EncargadoVisores extends Thread{
-    RealidadVirtual realidadVirtualX;
+    private RealidadVirtual realidadVirtualX;
 
     public EncargadoVisores(RealidadVirtual realidadVirtualX){
         this.realidadVirtualX = realidadVirtualX;

@@ -3,8 +3,8 @@ package ObjetoActivo;
 import RecursoCompartido.CasaPremios;
 
 public class EmpleadoPremios extends Thread{
-    CasaPremios casaPremiosX;
-    int puntosTotales;
+    private CasaPremios casaPremiosX;
+    private int puntosTotales;
 
     public EmpleadoPremios(CasaPremios casaPremiosX){
         this.casaPremiosX = casaPremiosX;

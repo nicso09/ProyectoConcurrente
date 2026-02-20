@@ -12,14 +12,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public class MontaniaRusa {
-    BlockingQueue<Persona> colaDeEsperaMontania;
-    BlockingQueue<Persona> asientosMontaniaRusa;
-    CyclicBarrier esperaLimite;
-    Semaphore mutexHash;
-    Map<Persona, Semaphore> semaforoSubida; // Semáforo único por persona para subir
-    Map<Persona, Semaphore> semaforoBajada; // Semáforo único por persona para bajar
-    Semaphore mutexActividad;
-    boolean estadoActividad;
+    private BlockingQueue<Persona> colaDeEsperaMontania;
+    private BlockingQueue<Persona> asientosMontaniaRusa;
+    private CyclicBarrier esperaLimite;
+    private Semaphore mutexHash;
+    private Map<Persona, Semaphore> semaforoSubida; // Semáforo único por persona para subir
+    private Map<Persona, Semaphore> semaforoBajada; // Semáforo único por persona para bajar
+    private Semaphore mutexActividad;
+    private boolean estadoActividad;
 
     public MontaniaRusa() {
         colaDeEsperaMontania = new ArrayBlockingQueue<>(10);

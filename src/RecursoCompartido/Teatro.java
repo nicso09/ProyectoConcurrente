@@ -6,18 +6,18 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public class Teatro{
-    CyclicBarrier barreraAsistentes;
-    CyclicBarrier barreraPublico;
-    Semaphore showListo;
-    Semaphore espaciosTeatro;
-    Semaphore espaciosEspectaculo;
-    int cantPersonasShow;
-    int cantAsistentesEnEscenario;
-    Semaphore mutexAsistentes;
-    Semaphore mutexPersonas;
-    Semaphore mutexActividad;
-    Semaphore salidaPersonas;
-    boolean estadoActividad;
+    private CyclicBarrier barreraAsistentes;
+    private CyclicBarrier barreraPublico;
+    private Semaphore showListo;
+    private Semaphore espaciosTeatro;
+    private Semaphore espaciosEspectaculo;
+    private int cantPersonasShow;
+    private int cantAsistentesEnEscenario;
+    private Semaphore mutexAsistentes;
+    private Semaphore mutexPersonas;
+    private Semaphore mutexActividad;
+    private Semaphore salidaPersonas;
+    private boolean estadoActividad;
 
     public Teatro(){
         this.barreraAsistentes = new CyclicBarrier(4); // SE NECESITAN 4 ASISTENTES PARA UN SHOW

@@ -4,25 +4,25 @@ import ObjetoActivo.Persona;
 import java.util.concurrent.Semaphore;
 
 public class Parque {
-    int horarioActual;
-    int horarioCierre;
-    int horarioApertura;
-    Semaphore espacioParque;
-    Semaphore mutexParque;
-    Semaphore mutexActividades;
-    Semaphore molinetes;
-    boolean estaAbierto;
-    boolean actividadesAbiertas;
+    private int horarioActual;
+    private int horarioCierre;
+    private int horarioApertura;
+    private Semaphore espacioParque;
+    private Semaphore mutexParque;
+    private Semaphore mutexActividades;
+    private Semaphore molinetes;
+    private boolean estaAbierto;
+    private boolean actividadesAbiertas;
     // CONTROL MONTANIA RUSA
-    MontaniaRusa montaniaRusaX;
+    private MontaniaRusa montaniaRusaX;
     // CONTROL TEATRO
-    Teatro teatroX;
+    private Teatro teatroX;
     // CONTROL CASA PREMIOS
-    CasaPremios casaPremiosX;
+    private CasaPremios casaPremiosX;
     // CONTROL COMEDOR
-    Comedor comedorX;
+    private Comedor comedorX;
     // CONTROL REALIDAD VIRTUAL
-    RealidadVirtual realidadVirtualX;
+    private RealidadVirtual realidadVirtualX;
 
     public Parque(int horarioApertura, int horarioCierre, int cantMolinetes, int cantEspaciosParque, Teatro teatroX,
             MontaniaRusa montaniaRusaX, CasaPremios casaPremiosX, Comedor comedorX, RealidadVirtual realidadVirtualX) {

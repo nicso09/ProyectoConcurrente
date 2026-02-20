@@ -4,13 +4,13 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 public class RealidadVirtual {
-    Semaphore visores;
-    Semaphore manoplas;
-    Semaphore bases;
-    Semaphore encargado;
-    Semaphore ingresoJuego;
-    Semaphore mutexActividad;
-    boolean estadoActividad;
+    private Semaphore visores;
+    private Semaphore manoplas;
+    private Semaphore bases;
+    private Semaphore encargado;
+    private Semaphore ingresoJuego;
+    private Semaphore mutexActividad;
+    private boolean estadoActividad;
 
     public RealidadVirtual(int cantVisores, int cantManoplas, int cantBases) {
         this.visores = new Semaphore(cantVisores); // PARA UN CORRECTO FUNCIONAMIENTO MINIMO DEBE EXISITR 1 VISOR

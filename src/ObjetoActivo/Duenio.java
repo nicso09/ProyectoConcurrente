@@ -2,7 +2,7 @@ package ObjetoActivo;
 import RecursoCompartido.Parque;
 
 public class Duenio extends Thread{
-    Parque parqueX;
+    private Parque parqueX;
 
     public Duenio(Parque parqueX){
         this.parqueX = parqueX;

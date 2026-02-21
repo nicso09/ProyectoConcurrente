@@ -4,11 +4,12 @@ import RecursoCompartido.CasaPremios;
 
 public class EmpleadoPremios extends Thread{
     private CasaPremios casaPremiosX;
-    private int puntosTotales;
+    // private int puntosTotales;
 
+    // CONSTRUCTOR
     public EmpleadoPremios(CasaPremios casaPremiosX){
         this.casaPremiosX = casaPremiosX;
-        this.puntosTotales = 0;
+        // this.puntosTotales = 0;
     }
     
     public void run(){
@@ -26,10 +27,10 @@ public class EmpleadoPremios extends Thread{
         }
     }
 
-    private void entregarTipoPremio(int valor){
-        if(valor < 2){
+    private void entregarTipoPremio(int valor){ // REALIZA CONVERSION DE PUNTOS A PREMIO
+        if(valor < 40){
             System.out.println("--- PREMIO PEQUEÑO ENTREGADO ---");
-        } else if(valor < 4){
+        } else if(valor < 60){
             System.out.println(" --- PREMIO MEDIANO ENTREGADO ---");
         } else{
             System.out.println("--- PREMIO GRANDE ENTREGADO ---");

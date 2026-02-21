@@ -1,10 +1,10 @@
-package ObjetoActivo;
+package Main;
 
+import ObjetoActivo.*;
 import RecursoCompartido.*;
 
 public class Main {
     public static void main(String[] args) {
-
         // ATRACCIONES
         Teatro teatroX = new Teatro();
         MontaniaRusa montaniaX = new MontaniaRusa();
@@ -28,17 +28,13 @@ public class Main {
         empleadoX.start();
         encargadoX.start();
 
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 6; i++) { // ASISTENTES DEL TEATRO
             Asistente asistenteX = new Asistente(teatroX);
             asistenteX.start();
-            try {
-                Thread.sleep(900);
-            } catch (Exception e) {
-            }
         }
 
         int j = 0;
-        while (true) {
+        while (true) { // SIMULA LA LLEGADA DE PERSONAS DE MANERA CONSTANTE E INDETERMINADA
             Persona personaI = new Persona(parqueX, "" + j);
             j++;
             personaI.start();

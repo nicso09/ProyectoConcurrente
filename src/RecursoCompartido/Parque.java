@@ -13,17 +13,17 @@ public class Parque {
     private Semaphore molinetes;
     private boolean estaAbierto;
     private boolean actividadesAbiertas;
-    // CONTROL MONTANIA RUSA
+
+    // ---- ACTIVIDADES ----
     private MontaniaRusa montaniaRusaX;
-    // CONTROL TEATRO
     private Teatro teatroX;
-    // CONTROL CASA PREMIOS
-    private CasaPremios casaPremiosX;
-    // CONTROL COMEDOR
-    private Comedor comedorX;
-    // CONTROL REALIDAD VIRTUAL
     private RealidadVirtual realidadVirtualX;
 
+    // ---- SHOPPING ----
+    private CasaPremios casaPremiosX;
+    private Comedor comedorX;
+
+    // CONSTRUCTOR
     public Parque(int horarioApertura, int horarioCierre, int cantMolinetes, int cantEspaciosParque, Teatro teatroX,
             MontaniaRusa montaniaRusaX, CasaPremios casaPremiosX, Comedor comedorX, RealidadVirtual realidadVirtualX) {
         this.molinetes = new Semaphore(cantMolinetes);
@@ -32,16 +32,18 @@ public class Parque {
         this.espacioParque = new Semaphore(cantEspaciosParque);
         this.estaAbierto = false; // EL PARQUE INICA CERRADO
         this.actividadesAbiertas = false; // LAS ACTIVIDADES INICIAN CERRADAS
-        this.teatroX = teatroX;
-        this.montaniaRusaX = montaniaRusaX;
-        this.casaPremiosX = casaPremiosX;
-        this.comedorX = comedorX;
-        this.realidadVirtualX = realidadVirtualX;
-        this.horarioActual = 6; // 9 REPRESENTA 9AM
+        this.horarioActual = 6; // 6 REPRESENTA 6AM
         this.horarioCierre = horarioCierre;
         this.horarioApertura = horarioApertura;
+        // ACTIVIDADES O SHOPPING
+        this.montaniaRusaX = montaniaRusaX;
+        this.teatroX = teatroX;
+        this.realidadVirtualX = realidadVirtualX;
+        this.casaPremiosX = casaPremiosX;
+        this.comedorX = comedorX;
     }
 
+    // METODOS UTILIZADOS POR LA CLASE "Duenio" (MANEJAN EL CONTROL DEL PARQUE)
     public void abrirParque() {
         try {
             mutexParque.acquire();
@@ -60,147 +62,16 @@ public class Parque {
         }
     }
 
-    public void usarMolinete() {
+    public void abrirActividades() {
         try {
-            this.molinetes.acquire();
+            mutexActividades.acquire();
+            this.actividadesAbiertas = true;
+            montaniaRusaX.abrirActividad();
+            realidadVirtualX.abrirActividad();
+            teatroX.abrirActividad();
+            mutexActividades.release();
         } catch (Exception e) {
         }
-    }
-
-    public void dejarMolinete() {
-        try {
-            this.molinetes.release();
-        } catch (Exception e) {
-        }
-    }
-
-    public void ingresarAParque() {
-        try {
-            this.espacioParque.acquire();
-        } catch (Exception e) {
-        }
-    }
-
-    public void salirDeParque() {
-        this.espacioParque.release();
-    }
-
-    public boolean parqueEstaAbierto() {
-        try {
-            mutexParque.acquire();
-        } catch (Exception e) {
-            System.out.println("ERROR A");
-        }
-        boolean parqueAbierto = this.estaAbierto;
-        // System.out.println(estaAbierto);
-        mutexParque.release();
-        return parqueAbierto;
-    }
-
-    public boolean ingresarAMontania(Persona personaX) {
-        return montaniaRusaX.entrar(personaX);
-    }
-
-    public void subirMontania(Persona personaX) {
-        montaniaRusaX.esperarMontania(personaX);
-
-    }
-
-    public boolean esperaArranque(Persona personaX) {
-        return montaniaRusaX.esperarInicio(personaX);
-    }
-
-    public int bajarMontania(Persona personaX) {
-        try {
-            return montaniaRusaX.bajarMontania(personaX);
-        } catch (Exception e) {
-            System.out.println("ERROR AL BAJAR PASAJERO");
-            return 0;
-        }
-    }
-
-    public boolean ingresarATeatro() {
-        return teatroX.entrar();
-    }
-
-    public boolean ingresarAShow() {
-        return teatroX.personaIngresaAShow();
-    }
-
-    public void salirShow() {
-        teatroX.personaSaleShow();
-    }
-
-    public void salirTeatro() {
-        teatroX.salir();
-    }
-
-    public int canjearPremios(int x) {
-        return casaPremiosX.canjearPremio(x);
-    }
-
-    public void personaIngresaTienda() {
-        casaPremiosX.clienteBuscaPremio();
-    }
-
-    public void personaSaleTienda() {
-        casaPremiosX.clienteSaleDeTienda();
-    }
-
-    public boolean ingresarComedor() {
-        return comedorX.entrarAComedor();
-    }
-
-    public void salirDeComedor() {
-        comedorX.salirDeComedor();
-    }
-
-    public int sentarseEnMesa() {
-        return comedorX.sentarseEnMesa();
-    }
-
-    public int iniciarAComer(int x) {
-        return comedorX.iniciarAComer(x);
-    }
-
-    public void liberarMesa(int x) {
-        comedorX.liberarMesa(x);
-    }
-
-    public boolean intentarPonerCasco() {
-        return realidadVirtualX.intentarPonerCasco();
-    }
-
-    public boolean intentarPonerManoplas() {
-        return realidadVirtualX.intentarPonerManoplas();
-    }
-
-    public boolean intentarUsarBase() {
-        return realidadVirtualX.intentarUsarBase();
-    }
-
-    public void avisarAEncargado() {
-        realidadVirtualX.avisarAEncargado();
-    }
-
-    public void ingresarAJugarRealidad() {
-        realidadVirtualX.ingresarAJugar();
-    }
-
-    public int terminarDeJugarRealidad() {
-        return realidadVirtualX.terminarDeJugar();
-    }
-
-    public boolean teatroAbierto() {
-        return teatroX.estaAbierto();
-    }
-
-    public boolean realidadVirtualAbierto() {
-        return realidadVirtualX.estaAbierto();
-    }
-
-    public boolean montaniaRusaAbierto() {
-        return montaniaRusaX.estaAbierto();
     }
 
     public void cerrarActividades() {
@@ -274,14 +145,37 @@ public class Parque {
 
     }
 
-    public void abrirActividades() {
+    // METODOS UTILIZADOS POR LA CLASE "Persona" -- INGRESO Y SALIDA / CONTROL --
+    public boolean parqueEstaAbierto() {
         try {
-            mutexActividades.acquire();
-            this.actividadesAbiertas = true;
-            montaniaRusaX.abrirActividad();
-            realidadVirtualX.abrirActividad();
-            teatroX.abrirActividad();
-            mutexActividades.release();
+            mutexParque.acquire();
+        } catch (Exception e) {
+            System.out.println("ERROR A");
+        }
+        boolean parqueAbierto = this.estaAbierto;
+        // System.out.println(estaAbierto);
+        mutexParque.release();
+        return parqueAbierto;
+    }
+
+    public boolean personaIntentarEntrarParque() {
+        return espacioParque.tryAcquire();
+    }
+
+    public void salirDeParque() {
+        this.espacioParque.release();
+    }
+
+    public void usarMolinete() {
+        try {
+            this.molinetes.acquire();
+        } catch (Exception e) {
+        }
+    }
+
+    public void dejarMolinete() {
+        try {
+            this.molinetes.release();
         } catch (Exception e) {
         }
     }
@@ -296,6 +190,109 @@ public class Parque {
         }
 
         return actividadesEstanDispo;
+    }
+
+    // METODOS UTILIZADOS POR LA CLASE "Persona" -- MONTAÑA RUSA --
+    public boolean montaniaRusaAbierto() {
+        return montaniaRusaX.estaAbierto();
+    }
+
+    public boolean ingresarAMontania(Persona personaX) {
+        return montaniaRusaX.entrar(personaX);
+    }
+
+    public void subirMontania(Persona personaX) {
+        montaniaRusaX.esperarMontania(personaX);
+
+    }
+
+    public boolean esperaArranque(Persona personaX) {
+        return montaniaRusaX.esperarInicio(personaX);
+    }
+
+    public int bajarMontania(Persona personaX) {
+        try {
+            return montaniaRusaX.bajarMontania(personaX);
+        } catch (Exception e) {
+            System.out.println("ERROR AL BAJAR PASAJERO");
+            return 0;
+        }
+    }
+
+    // METODOS UTILIZADOS POR LA CLASE "Persona" -- TEATRO --
+    public boolean teatroAbierto() {
+        return teatroX.estaAbierto();
+    }
+
+    public boolean ingresarATeatro() {
+        return teatroX.entrarTeatro();
+    }
+
+    public boolean salirTeatro() {
+        return teatroX.salirTeatro();
+    }
+
+    // METODOS UTILIZADOS POR LA CLASE "Persona" -- REALIDAD VIRTUAL --
+    public boolean realidadVirtualAbierto() {
+        return realidadVirtualX.estaAbierto();
+    }
+
+    public boolean intentarPonerCasco() {
+        return realidadVirtualX.intentarPonerCasco();
+    }
+
+    public boolean intentarPonerManoplas() {
+        return realidadVirtualX.intentarPonerManoplas();
+    }
+
+    public boolean intentarUsarBase() {
+        return realidadVirtualX.intentarUsarBase();
+    }
+
+    public void avisarAEncargado() {
+        realidadVirtualX.avisarAEncargado();
+    }
+
+    public void ingresarAJugarRealidad() {
+        realidadVirtualX.ingresarAJugar();
+    }
+
+    public int terminarDeJugarRealidad() {
+        return realidadVirtualX.terminarDeJugar();
+    }
+
+    // METODOS UTILIZADOS POR LA CLASE "Persona" -- COMEDOR --
+    public boolean ingresarComedor() {
+        return comedorX.entrarAComedor();
+    }
+
+    public void salirDeComedor() {
+        comedorX.salirDeComedor();
+    }
+
+    public int sentarseEnMesa() {
+        return comedorX.sentarseEnMesa();
+    }
+
+    public int iniciarAComer(int x) {
+        return comedorX.iniciarAComer(x);
+    }
+
+    public void liberarMesa(int x) {
+        comedorX.liberarMesa(x);
+    }
+
+    // METODOS UTILIZADOS POR LA CLASE "Persona" -- CASA PREMIOS --
+    public int canjearPremios(int x) {
+        return casaPremiosX.canjearPremio(x);
+    }
+
+    public void personaIngresaTienda() {
+        casaPremiosX.clienteBuscaPremio();
+    }
+
+    public void personaSaleTienda() {
+        casaPremiosX.clienteSaleDeTienda();
     }
 
 }

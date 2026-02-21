@@ -5,6 +5,7 @@ import RecursoCompartido.MontaniaRusa;
 public class OperadorMontania extends Thread{
     private MontaniaRusa montaniaRusaX;
 
+    // CONSTRUCTOR
     public OperadorMontania(MontaniaRusa montaniaRusaX){
         this.montaniaRusaX = montaniaRusaX;
     }
@@ -18,8 +19,9 @@ public class OperadorMontania extends Thread{
                 } catch (Exception e) {
                 }
                 System.out.println("LA MONTAÑA RUSA ESTA LLENA, INICIANDO RECORRIDO...");
+                montaniaRusaX.arrancarMontania();
                 try {
-                    Thread.sleep(5000);
+                    Thread.sleep(6000);
                     System.out.println("EL VIAJE HA FINALIZADO... BAJANDO PERSONAS");
                     while(!montaniaRusaX.estaVacia()){
                         Thread.sleep(800);

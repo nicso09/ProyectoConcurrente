@@ -12,6 +12,7 @@ public class Comedor {
     private Semaphore [] espaciosMesas;
     private Semaphore espaciosComedor;
 
+    // CONSTRUCTOR
     public Comedor(int cantMesas) {
         this.mesas = new CyclicBarrier[cantMesas];
         this.espaciosMesas = new Semaphore[cantMesas];
@@ -23,6 +24,7 @@ public class Comedor {
         } 
     }
 
+    // METODOS UTILIZADOS POR LA CLASE "Persona"
     public boolean entrarAComedor(){
         boolean pudoEntrar = false;
         try {

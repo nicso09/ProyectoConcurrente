@@ -1,159 +1,145 @@
 package RecursoCompartido;
-import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CyclicBarrier;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
-public class Teatro{
-    private CyclicBarrier barreraAsistentes;
-    private CyclicBarrier barreraPublico;
-    private Semaphore showListo;
-    private Semaphore espaciosTeatro;
-    private Semaphore espaciosEspectaculo;
-    private int cantPersonasShow;
-    private int cantAsistentesEnEscenario;
-    private Semaphore mutexAsistentes;
-    private Semaphore mutexPersonas;
-    private Semaphore mutexActividad;
-    private Semaphore salidaPersonas;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
+
+public class Teatro {
+    private ReentrantLock keyLock;
+    private Condition asistentes;
+    private Condition personasAfuera;
+    private Condition personasDentro;
+    private Condition grupo;
+    private int espaciosTeatroX;
+    private int grupoPersonas;
+    private int cantAsistentes;
+    private boolean grupoListo;
+    private boolean entradaHabilitada;
+    private boolean showIniciado;
     private boolean estadoActividad;
 
-    public Teatro(){
-        this.barreraAsistentes = new CyclicBarrier(4); // SE NECESITAN 4 ASISTENTES PARA UN SHOW
-        this.barreraPublico = new CyclicBarrier(5);
-        this.espaciosTeatro = new Semaphore(20); // EL TTEATRO PUEDE TENER 20 PERSONAS DENTRO
-        this.espaciosEspectaculo = new Semaphore(5); // EL ESPECTACULO ADMITE 5 PERSONAS
-        this.showListo = new Semaphore(0);
-        this.mutexPersonas = new Semaphore(1);
-        this.mutexAsistentes = new Semaphore(1);
-        this.mutexActividad = new Semaphore(1);
-        this.salidaPersonas = new Semaphore(0);
-        this.cantAsistentesEnEscenario = 0;
-        this.cantPersonasShow = 0;
+    // CONSTRUCTOR
+    public Teatro() {
+        this.keyLock = new ReentrantLock();
+        this.asistentes = keyLock.newCondition();
+        this.personasAfuera = keyLock.newCondition();
+        this.grupo = keyLock.newCondition();
+        this.personasDentro = keyLock.newCondition();
+        this.espaciosTeatroX = 20;
+        this.cantAsistentes = 0; // CANTIDAD DE ASISTENTES EN EL ESCENARIO
+        this.grupoPersonas = 0;
+        this.grupoListo = false; // GRUPO LISTO EQUIVALE A QUE HAY UN GRUPO DE 5 PERSONAS PARA INGRESAR
+        this.entradaHabilitada = true;
+        this.showIniciado = false;
         this.estadoActividad = false; // TRUE SIGNIFICA ABIERTA - FALSE SIGNFICA CERRADA
     }
 
-    public void abrirActividad(){
-       try {
-            this.mutexActividad.acquire();
+    // METODOS UTILIZADOS POR LA CLASE "Duenio"
+    public void abrirActividad() {
+        try {
+            keyLock.lock();
             this.estadoActividad = true;
-            this.mutexActividad.release(); 
+            keyLock.unlock();
         } catch (Exception e) {
         }
     }
 
-    public void cerrarActividad(){
-        try {
-            this.mutexActividad.acquire();
-        } catch (Exception e) {
-        }
+    public void cerrarActividad() {
+        keyLock.lock();
         this.estadoActividad = false;
-        this.mutexActividad.release();
+        keyLock.unlock();
     }
 
-    public boolean estaAbierto(){
+    // METODOS UTILIZADOS POR LA CLASE "Persona"
+    public boolean estaAbierto() {
         boolean actividadAbierta = false;
-        try {
-            this.mutexActividad.acquire();
-            actividadAbierta = this.estadoActividad;
-            this.mutexActividad.release();
-        } catch (Exception e) {
-        }
+        keyLock.lock();
+        actividadAbierta = this.estadoActividad;
+        keyLock.unlock();
         return actividadAbierta;
     }
 
-    public boolean entrar(){
-        return espaciosTeatro.tryAcquire();
-    }
-
-    public void salir(){
-        espaciosTeatro.release();
-    }
-
-    public boolean personaIngresaAShow(){ 
-        boolean ingresoShow = true;
-        try {
-            espaciosEspectaculo.acquire();
-            barreraPublico.await(30, TimeUnit.SECONDS);
-            if(this.estaLleno()){
-                System.out.println("EL ESPECTACULO ESTÁ LLENO, EL SHOW ESTA LISTO PARA EMPEZAR");
-                showListo.release();
+    public boolean entrarTeatro() {
+        boolean pudeIngresar = true;
+        keyLock.lock();
+        while (espaciosTeatroX <= 0 || grupoListo || !entradaHabilitada) {
+            try {
+                pudeIngresar = personasAfuera.await(40, TimeUnit.SECONDS);
+            } catch (Exception e) {
             }
-        } catch (TimeoutException | BrokenBarrierException e) {
-            synchronized (barreraPublico) {
-                if(barreraPublico.isBroken()) // REPARAMOS LA BARRERA PARA PROXIMAS PERSONAS (HILOS)
-                    barreraPublico.reset();
-            }
-            System.out.println("Una persona se cansó de esperar el espectaculo y se ha ido");
-            espaciosEspectaculo.release();
-            ingresoShow = false;
-        } catch(Exception e){
         }
-        return ingresoShow;
-    }
-
-
-    public boolean estaLleno() throws InterruptedException{
-        boolean estaLleno;
-        mutexPersonas.acquire();
-        cantPersonasShow++;
-        estaLleno = (cantPersonasShow >= 5);
-        mutexPersonas.release();
-        return estaLleno;
-    }
-
-    public void asistenteListoParaShow(){
-       try {
-            barreraAsistentes.await();
-       } catch (Exception e) {
-       } 
-    }
-    
-    public void habilitarShow(){
-        showListo.release();
-    }
-
-    public void asistenteIngresaAShow(){
-       try {
-           showListo.acquire();
-           mutexAsistentes.acquire();
-           cantAsistentesEnEscenario++; 
-           if(cantAsistentesEnEscenario < 4){
-            showListo.release();
-           } else{
-            System.out.println("Los asistentes han ingresado al show");
-           }
-           mutexAsistentes.release();
-       } catch (Exception e) {
-       }
-    }
-
-    public void asistenteSaleDelShow(){
-        try {
-            mutexAsistentes.acquire();
-            cantAsistentesEnEscenario--;
-            if(cantAsistentesEnEscenario <= 0){
-                System.out.println("EL SHOW HA FINALIZADO, PUEDEN SALIR LAS PERSONAS DEL SHOW");
-                salidaPersonas.release();
+        if (pudeIngresar) {
+            grupoPersonas++;
+            while (!grupoListo) {
+                if (grupoPersonas < 5) {
+                    try {
+                        grupo.await();
+                    } catch (Exception e) {
+                    }
+                } else {
+                    grupoListo = true;
+                    grupo.signalAll();
+                }
             }
-            mutexAsistentes.release();
+            espaciosTeatroX--;
+            grupoPersonas--;
+            if (espaciosTeatroX > 0) {
+                if (grupoPersonas <= 0) {
+                    this.grupoListo = false;
+                    personasAfuera.signalAll();
+                }
+            } else {
+                this.grupoListo = false;
+                this.entradaHabilitada = false;
+                this.showIniciado = true;
+                asistentes.signalAll();
+            }
+        }
+        keyLock.unlock();
+        return pudeIngresar;
+    }
+
+    public boolean salirTeatro() {
+        boolean terminoShow = true;
+        keyLock.lock();
+        try {
+            terminoShow = personasDentro.await(40, TimeUnit.SECONDS);
         } catch (Exception e) {
         }
+        espaciosTeatroX++;
+        if (espaciosTeatroX >= 20) {
+            this.entradaHabilitada = true;
+            personasAfuera.signalAll();
+        }
+        keyLock.unlock();
+        return terminoShow;
     }
 
-    public void personaSaleShow(){
-        try {
-            salidaPersonas.acquire();
-            mutexPersonas.acquire();
-            cantPersonasShow--;
-            if(cantPersonasShow > 0){
-                salidaPersonas.release();
-            } else{
-                espaciosEspectaculo.release(5);
+    // METODOS UTILIZADOS POR LA CLASE "Asistentes"
+    public void asistenteEntraShow() {
+        keyLock.lock();
+        while (!showIniciado) {
+            try {
+                asistentes.await();
+            } catch (Exception e) {
             }
-            mutexPersonas.release();
-        } catch (Exception e) {
         }
+        if (cantAsistentes == 0)
+            System.out.println("EL ESPECTACULO ESTÁ LLENO, EL SHOW ESTA LISTO PARA EMPEZAR");
+        cantAsistentes++;
+        keyLock.unlock();
+    }
+
+    public void finalizarShow() {
+        keyLock.lock();
+        if (showIniciado) {
+            showIniciado = false;
+            System.out.println("EL SHOW HA FINALIZADO...");
+        }
+        cantAsistentes--;
+        if (cantAsistentes <= 0) {
+            this.personasDentro.signalAll();
+        }
+        keyLock.unlock();
     }
 }

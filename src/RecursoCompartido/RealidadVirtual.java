@@ -16,7 +16,8 @@ public class RealidadVirtual {
     // CONSTRUCTOR
     public RealidadVirtual(int cantVisores, int cantManoplas, int cantBases) {
         this.visores = new Semaphore(cantVisores); // PARA UN CORRECTO FUNCIONAMIENTO MINIMO DEBE EXISITR MINIMO 1 VISOR
-        this.manoplas = new Semaphore(cantManoplas); // PARA UN CORRECTO FUNCIONAMIENTO MINIMO DEBEN EXISTIR MINIMO 2 MANOPLAS
+        this.manoplas = new Semaphore(cantManoplas); // PARA UN CORRECTO FUNCIONAMIENTO MINIMO DEBEN EXISTIR MINIMO 2
+                                                     // MANOPLAS
         this.bases = new Semaphore(cantBases); // PARA UN CORRECTO FUNCIONAMIENTO MINIMO DEBE EXISITR MINIMO 1 BASE
         this.ingresoJuego = new Semaphore(0);
         this.encargado = new Semaphore(0);
